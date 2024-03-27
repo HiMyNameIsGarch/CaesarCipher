@@ -1,58 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MIN_LOWER 65
-#define MAX_LOWER 90
-
-#define MIN_UPPER 97
-#define MAX_UPPER 122
-
-#define ALPHABET 26
-
-int getIndexForChar(char l) {
-    // Lower case
-    if (l >= MIN_UPPER && l <= MAX_UPPER) {
-        return l - MIN_UPPER;
-    }
-    // Upper case
-    if (l >= MIN_LOWER && l <= MAX_LOWER) {
-        return l - MIN_LOWER;
-    }
-    // Not a letter
-    return -1;
-}
-char shiftChar(char a, int i) {
-    // Lower case letters
-    if (a >= MIN_LOWER && a <= MAX_LOWER) {
-        a = a + i;
-        if (a < MIN_LOWER) {
-            a = MAX_LOWER - ((MIN_LOWER - 1) - a);
-        } else if (a > MAX_LOWER) {
-            a = MIN_LOWER + (a - (MAX_LOWER + 1));
-        }
-
-    // Upper case letters
-    } else if (a >= MIN_UPPER && a <= MAX_UPPER) {
-        a = a + i;
-        if (a < MIN_UPPER) {
-            a = MAX_UPPER - ((MIN_UPPER - 1) - a);
-        } else if (a > MAX_UPPER) {
-            a = MIN_UPPER + (a - (MAX_UPPER + 1));
-        }
-    }
-    return a;
-}
-
-void next_permutation(char *f, const int l) {
-    for(int i = 0; i < l; ++i) {
-        f[i] = shiftChar(f[i], -1);
-    }
-}
+#include "include/char_op.h"
 
 void readFreq(float freq[26]) {
     FILE *fptr;
-    fptr = fopen("distribution.txt", "r");
+    fptr = fopen("tomb/distribution.txt", "r");
     char chars[ALPHABET] = { 0 };
 
     short unsigned int i = 0;
@@ -65,7 +18,7 @@ void readFreq(float freq[26]) {
 
 void normFreq(const char *txt, float cfreq[ALPHABET]) {
     for(int i = 0; txt[i]; i++) {
-        int index = getIndexForChar(txt[i]);
+        int index = getIndexOfChar(txt[i]);
 
         if (index == -1) {
             continue;
@@ -106,7 +59,7 @@ void crackCipher(char *cipher, float freq[ALPHABET], const int l, int *key, char
     // ( basically shift all the letters by -1)
     // We only need to do this 25 times as those are all the possible shifts
     for (int i = 0; i < ALPHABET; i++) {
-        next_permutation(cipher, l);
+        permuteChars(cipher, l);
 
         // Reset the frequency array
         clean_arr(cfreq, ALPHABET);

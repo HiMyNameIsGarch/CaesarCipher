@@ -1,3 +1,4 @@
 defaults:
-	gcc -o build/main.o *.c -Wall -Wextra -g -lm
+	touch tomb/decrypted.txt
+	gcc -o build/main.o src/*.c main.c -Wall -Werror -Wextra -g -lm
 	./build/main.o
