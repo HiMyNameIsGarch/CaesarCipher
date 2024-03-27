@@ -4,6 +4,9 @@
 # Build files
 build/
 
+# Debug files
+debug/
+
 # Object files
 *.o
 *.ko

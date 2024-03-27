@@ -6,6 +6,9 @@
 void readFreq(float freq[26]) {
     FILE *fptr;
     fptr = fopen("tomb/distribution.txt", "r");
+    if(!fptr) {
+        return;
+    }
     char chars[ALPHABET] = { 0 };
 
     short unsigned int i = 0;
@@ -14,6 +17,34 @@ void readFreq(float freq[26]) {
         i++;
     }
     fclose(fptr);
+}
+
+char * readEncrypted() {
+    FILE *fptr;
+    fptr = fopen("tomb/encrypted.txt", "r");
+    if(!fptr) {
+        return NULL;
+    }
+
+    fseek(fptr, 0, SEEK_END);
+    long lSize = ftell(fptr);
+    fseek(fptr, 0, SEEK_SET);
+
+    char *txt = (char *)malloc(lSize * sizeof(char));
+
+    if(txt == NULL) {
+        return NULL;
+    }
+
+    short unsigned int i = 0;
+    char ch;
+    while (fscanf(fptr, "%c", &ch) != EOF) {
+        txt[i] = ch;
+        i++;
+    }
+    fclose(fptr);
+
+    return txt;
 }
 
 void normFreq(const char *txt, float cfreq[ALPHABET]) {
@@ -78,7 +109,10 @@ void crackCipher(char *cipher, float freq[ALPHABET], const int l, int *key, char
 int main() {
     float freq[ALPHABET];
     readFreq(freq);
-    char code[] = "Uf ime ftq nqef ar fuyqe, uf ime ftq iadef ar fuyqe, uf ime ftq msq ar iuepay, uf ime ftq msq ar raaxuetzqee, uf ime ftq qbaot ar nqxuqr, uf ime ftq qbaot ar uzodqpgxufk, uf ime ftq eqmeaz ar xustf, uf ime ftq eqmeaz ar pmdwzqee, uf ime ftq ebduzs ar tabq, uf ime ftq iuzfqd ar pqebmud.\0";
+
+    char *code = NULL;
+    code = readEncrypted();
+    printf("%s\n", code);
     int l = 0;
     while (code[l]) {
         l++;
@@ -86,6 +120,7 @@ int main() {
     char decrypted[l];
     int key = 0;
     crackCipher(code, freq, l, &key, decrypted);
+    free(code);
     printf("Decrypted: %s\n", decrypted);
     printf("Key: %d\n", key);
     return 0;
